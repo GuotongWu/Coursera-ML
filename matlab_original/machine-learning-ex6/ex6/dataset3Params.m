@@ -11,7 +11,6 @@ function [C, sigma] = dataset3Params(X, y, Xval, yval)
 C = 1;
 sigma = 0.3;
 
-
 % ====================== YOUR CODE HERE ======================
 % Instructions: Fill in this function to return the optimal C and sigma
 %               learning parameters found using the cross validation set.
@@ -24,25 +23,21 @@ sigma = 0.3;
 %        mean(double(predictions ~= yval))
 %
 
-multiplication = [0.01 0.03 0.1 0.3 1 3 10 30];
-mean_predictions = zeros(length(multiplication)^2,1);
-i = 1;
-for k = 1:length(multiplication)
-    for j = 1:length(multiplication)
-        C = multiplication(k);
-        sigma = multiplication(j);
-        model = svmTrain(X,y,C,@(x1,x2) gaussianKernel(x1,x2,sigma)); % 这里不是很清楚
+digit = [0.01;0.03;0.1;0.3;1;3;10;30];
+error = zeros(length(digit), length(digit));
+for k = 1:length(digit)
+    for m = 1:length(digit)
+        C = digit(k);
+        sigma = digit(m);
+        model= svmTrain(X, y, C, @(x1, x2) gaussianKernel(x1, x2, sigma));
         predictions = svmPredict(model, Xval);
-        mean_predictions(i) = mean(double(predictions ~= yval));
-        i = i+1;
+        error(k,m) = mean(double(predictions ~= yval));
     end
 end
-
-rep = reshape(mean_predictions,[length(multiplication),length(multiplication)]);
-pos = min(min(rep));
-[pos_x,pos_y] = find(rep == pos);
-C = multiplication(pos_y);
-sigma = multiplication(pos_x);
+[~, I] = min(error(:));
+[I_row, I_col] = ind2sub(size(error),I); % 将向量索引转换为矩阵索引
+C = digit(I_row);
+sigma = digit(I_col);
 
 % =========================================================================
 
