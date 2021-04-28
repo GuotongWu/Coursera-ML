@@ -2,3 +2,4 @@ token.mat
 lib
 .vscode
 *.asv
+*.pyc
